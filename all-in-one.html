@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>All-in-One Frontend Demo</title>
+    
+    <style>
+        :root {
+            --bg: #ffffff;
+            --text: #1a1a1a;
+            --card-bg: #f4f4f5;
+            --accent: #3b82f6;
+            --transition: 0.3s ease;
+        }
+
+        [data-theme="dark"] {
+            --bg: #09090b;
+            --text: #fafafa;
+            --card-bg: #18181b;
+            --accent: #60a5fa;
+        }
+
+        body {
+            margin: 0;
+            font-family: system-ui, -apple-system, sans-serif;
+            background-color: var(--bg);
+            color: var(--text);
+            transition: background-color var(--transition), color var(--transition);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+
+        .container {
+            width: 90%;
+            max-width: 400px;
+            padding: 2rem;
+            background-color: var(--card-bg);
+            border-radius: 1rem;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+            text-align: center;
+        }
+
+        .profile-img {
+            width: 80px;
+            height: 80px;
+            background: var(--accent);
+            border-radius: 50%;
+            margin: 0 auto 1rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2rem;
+        }
+
+        h1 { margin: 0.5rem 0; font-size: 1.5rem; }
+        p { opacity: 0.8; line-height: 1.5; }
+
+        .controls {
+            margin-top: 2rem;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        button {
+            padding: 12px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: transform 0.1s;
+        }
+
+        .btn-toggle {
+            background-color: var(--accent);
+            color: white;
+        }
+
+        .btn-alert {
+            background-color: transparent;
+            border: 2px solid var(--accent);
+            color: var(--accent);
+        }
+
+        button:active { transform: scale(0.95); }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <div class="profile-img">🚀</div>
+        <h1>Frontend Explorer</h1>
+        <p>This is a single-file web application using HTML, CSS, and Vanilla JavaScript.</p>
+        
+        <div class="controls">
+            <button class="btn-toggle" onclick="toggleTheme()">Switch Theme</button>
+            <button class="btn-alert" onclick="greetUser()">Say Hello</button>
+        </div>
+        
+        <p id="status" style="margin-top: 20px; font-size: 0.8rem;"></p>
+    </div>
+
+    <script>
+        // 1. Theme Toggling Logic
+        function toggleTheme() {
+            const body = document.body;
+            const currentTheme = body.getAttribute('data-theme');
+            
+            if (currentTheme === 'dark') {
+                body.removeAttribute('data-theme');
+                updateStatus("Light Mode Active");
+            } else {
+                body.setAttribute('data-theme', 'dark');
+                updateStatus("Dark Mode Active");
+            }
+        }
+
+        // 2. Simple Interaction Logic
+        function greetUser() {
+            const time = new Date().getHours();
+            let greeting = "Hello!";
+            
+            if (time < 12) greeting = "Good Morning!";
+            else if (time < 18) greeting = "Good Afternoon!";
+            else greeting = "Good Evening!";
+            
+            alert(`${greeting} Ready to build something cool?`);
+        }
+
+        // 3. Helper to update text on screen
+        function updateStatus(msg) {
+            document.getElementById('status').innerText = msg;
+        }
+    </script>
+</body>
+</html>
