@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Development Dashboard</title>
+    <style>
+        /* CSS Variables for easy theme management */
+        :root {
+            --bg-body: #f0f2f5;
+            --bg-sidebar: #1e293b;
+            --bg-card: #ffffff;
+            --text-main: #1e293b;
+            --text-muted: #64748b;
+            --primary: #3b82f6;
+            --accent: #10b981;
+            --transition: all 0.3s ease;
+        }
+
+        /* Dark Mode Colors */
+        body.dark-theme {
+            --bg-body: #0f172a;
+            --bg-sidebar: #020617;
+            --bg-card: #1e293b;
+            --text-main: #f1f5f9;
+            --text-muted: #94a3b8;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Inter', system-ui, -apple-system, sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-body);
+            color: var(--text-main);
+            transition: var(--transition);
+            display: flex;
+            min-height: 100vh;
+        }
+
+        /* Sidebar Navigation */
+        nav {
+            width: 260px;
+            background-color: var(--bg-sidebar);
+            color: white;
+            padding: 2rem;
+            display: flex;
+            flex-direction: column;
+        }
+
+        nav h2 {
+            font-size: 1.25rem;
+            margin-bottom: 2rem;
+            letter-spacing: 1px;
+            color: var(--primary);
+        }
+
+        nav ul {
+            list-style: none;
+        }
+
+        nav li {
+            padding: 0.8rem 1rem;
+            margin-bottom: 0.5rem;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: var(--transition);
+            color: #cbd5e1;
+        }
+
+        nav li:hover, nav li.active {
+            background-color: rgba(255, 255, 255, 0.1);
+            color: white;
+        }
+
+        /* Main Content Area */
+        main {
+            flex: 1;
+            padding: 2rem;
+            overflow-y: auto;
+        }
+
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+        }
+
+        .btn-toggle {
+            padding: 0.6rem 1.2rem;
+            border: none;
+            border-radius: 20px;
+            background-color: var(--primary);
+            color: white;
+            cursor: pointer;
+            font-weight: 600;
+            transition: var(--transition);
+        }
+
+        .btn-toggle:hover {
+            opacity: 0.9;
+            transform: translateY(-1px);
+        }
+
+        /* Stats Grid */
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 1.5rem;
+        }
+
+        .card {
+            background-color: var(--bg-card);
+            padding: 1.5rem;
+            border-radius: 16px;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            transition: var(--transition);
+        }
+
+        .card h3 {
+            font-size: 0.9rem;
+            color: var(--text-muted);
+            margin-bottom: 1rem;
+            text-transform: uppercase;
+        }
+
+        .card .value {
+            font-size: 1.8rem;
+            font-weight: 700;
+        }
+
+        .progress-container {
+            width: 100%;
+            height: 8px;
+            background-color: #e2e8f0;
+            border-radius: 4px;
+            margin-top: 1rem;
+            overflow: hidden;
+        }
+
+        .progress-bar {
+            height: 100%;
+            background-color: var(--accent);
+            width: 0%; /* Animated via JS */
+            transition: width 1s ease-in-out;
+        }
+
+        /* Responsive Tweaks */
+        @media (max-width: 768px) {
+            body { flex-direction: column; }
+            nav { width: 100%; padding: 1rem; }
+            nav h2 { margin-bottom: 1rem; }
+            nav ul { display: flex; gap: 10px; overflow-x: auto; }
+            nav li { white-space: nowrap; }
+        }
+    </style>
+</head>
+<body>
+
+    <nav>
+        <h2>WORKSPACE</h2>
+        <ul>
+            <li class="active">Dashboard</li>
+            <li>Projects</li>
+            <li>Databases</li>
+            <li>Deployments</li>
+            <li>Settings</li>
+        </ul>
+    </nav>
+
+    <main>
+        <header>
+            <div>
+                <h1>Project Overview</h1>
+                <p style="color: var(--text-muted)">Welcome back to your workspace.</p>
+            </div>
+            <button class="btn-toggle" id="themeBtn">Dark Mode</button>
+        </header>
+
+        <section class="grid">
+            <div class="card">
+                <h3>Active Projects</h3>
+                <div class="value">12</div>
+                <p style="color: var(--accent); font-size: 0.8rem; margin-top: 0.5rem;">+2 this week</p>
+            </div>
+
+            <div class="card">
+                <h3>Cloud Usage</h3>
+                <div class="value">78%</div>
+                <div class="progress-container">
+                    <div class="progress-bar" id="usageBar"></div>
+                </div>
+            </div>
+
+            <div class="card">
+                <h3>API Requests</h3>
+                <div class="value" id="counter">0</div>
+                <p style="color: var(--text-muted); font-size: 0.8rem; margin-top: 0.5rem;">Live updates</p>
+            </div>
+        </section>
+    </main>
+
+    <script>
+        // 1. Theme Toggling Logic
+        const themeBtn = document.getElementById('themeBtn');
+        const body = document.body;
+
+        themeBtn.addEventListener('click', () => {
+            body.classList.toggle('dark-theme');
+            const isDark = body.classList.contains('dark-theme');
+            themeBtn.textContent = isDark ? 'Light Mode' : 'Dark Mode';
+            
+            // Optional: Save preference to localStorage
+            localStorage.setItem('theme', isDark ? 'dark' : 'light');
+        });
+
+        // 2. Initialize Animations on Load
+        window.addEventListener('DOMContentLoaded', () => {
+            // Animate Progress Bar
+            setTimeout(() => {
+                document.getElementById('usageBar').style.width = '78%';
+            }, 500);
+
+            // Animate Counter
+            const counterElement = document.getElementById('counter');
+            let count = 0;
+            const target = 1420;
+            const increment = target / 50;
+
+            const updateCount = () => {
+                if (count < target) {
+                    count = Math.ceil(count + increment);
+                    counterElement.innerText = count.toLocaleString();
+                    setTimeout(updateCount, 30);
+                } else {
+                    counterElement.innerText = target.toLocaleString();
+                }
+            };
+            updateCount();
+
+            // Load saved theme
+            if (localStorage.getItem('theme') === 'dark') {
+                body.classList.add('dark-theme');
+                themeBtn.textContent = 'Light Mode';
+            }
+        });
+
+        // 3. Simple Sidebar Navigation Toggle
+        const navItems = document.querySelectorAll('nav li');
+        navItems.forEach(item => {
+            item.addEventListener('click', () => {
+                navItems.forEach(i => i.classList.remove('active'));
+                item.classList.add('active');
+            });
+        });
+    </script>
+</body>
+</html>
